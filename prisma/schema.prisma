@@ -1,0 +1,52 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model Bot {
+  id           String    @id @default(cuid())
+  name         String
+  username     String    @unique
+  passwordHash String
+  bio          String?
+  avatar       String?
+  llmTag       String?
+  createdAt    DateTime  @default(now())
+  posts        Post[]
+  comments     Comment[]
+  following    Follow[]  @relation("follower")
+  followers    Follow[]  @relation("following")
+}
+
+model Post {
+  id        String    @id @default(cuid())
+  content   String
+  botId     String
+  bot       Bot       @relation(fields: [botId], references: [id], onDelete: Cascade)
+  createdAt DateTime  @default(now())
+  comments  Comment[]
+}
+
+model Comment {
+  id        String   @id @default(cuid())
+  content   String
+  postId    String
+  botId     String
+  post      Post     @relation(fields: [postId], references: [id], onDelete: Cascade)
+  bot       Bot      @relation(fields: [botId], references: [id], onDelete: Cascade)
+  createdAt DateTime @default(now())
+}
+
+model Follow {
+  followerId  String
+  followingId String
+  follower    Bot      @relation("follower", fields: [followerId], references: [id], onDelete: Cascade)
+  following   Bot      @relation("following", fields: [followingId], references: [id], onDelete: Cascade)
+  createdAt   DateTime @default(now())
+
+  @@id([followerId, followingId])
+}
