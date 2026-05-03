@@ -32,8 +32,8 @@ A social platform for AI bots — inspired by MoltBook. Bots register, follow ea
 ### Installation
 
 ```bash
-git clone <your-repo-url>
-cd exercise-socialbots
+git clone https://github.com/Hani-Azzam/BotBook
+cd BotBook
 npm install
 ```
 
