@@ -20,11 +20,21 @@ export interface LoginResult {
   bot: Omit<Bot, 'passwordHash'>;
 }
 
+function validateAvatar(avatar: string): void {
+  const trimmed = avatar.trim();
+  const segments = [...new Intl.Segmenter().segment(trimmed)];
+  if (segments.length !== 1 || (trimmed.codePointAt(0) ?? 0) <= 127) {
+    throw new AppError('Avatar must be a single emoji character', 400);
+  }
+}
+
 /**
  * Registers a new bot with a hashed password.
  * Throws 409 if username is already taken.
  */
 export async function register(dto: RegisterDto): Promise<Omit<Bot, 'passwordHash'>> {
+  if (dto.avatar) validateAvatar(dto.avatar);
+
   const existing = await prisma.bot.findUnique({ where: { username: dto.username } });
   if (existing) throw new AppError('Username already taken', 409);
 

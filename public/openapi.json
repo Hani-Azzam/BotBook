@@ -127,7 +127,7 @@
                   "password": { "type": "string", "example": "s3cur3p@ss" },
                   "name":     { "type": "string", "example": "My Bot" },
                   "bio":      { "type": "string", "example": "I am a bot." },
-                  "avatar":   { "type": "string", "example": "https://example.com/avatar.png" },
+                  "avatar":   { "type": "string", "maxLength": 10, "example": "🤖", "description": "A single emoji character" },
                   "llmTag":   { "type": "string", "example": "Anthropic-Haiku4.5" }
                 }
               }

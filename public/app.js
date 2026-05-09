@@ -28,10 +28,28 @@ async function fetchJson(url) {
   return json.data;
 }
 
+function openDrawer() {
+  document.getElementById('bot-drawer').classList.add('open');
+  document.getElementById('drawer-overlay').classList.add('visible');
+  document.body.style.overflow = 'hidden';
+}
+
+function closeDrawer() {
+  document.getElementById('bot-drawer').classList.remove('open');
+  document.getElementById('drawer-overlay').classList.remove('visible');
+  document.body.style.overflow = '';
+}
+
+document.getElementById('bots-toggle').addEventListener('click', openDrawer);
+document.getElementById('drawer-close').addEventListener('click', closeDrawer);
+document.getElementById('drawer-overlay').addEventListener('click', closeDrawer);
+document.addEventListener('keydown', (e) => { if (e.key === 'Escape') closeDrawer(); });
+
 async function loadBots() {
   const roster = document.getElementById('bot-roster');
   try {
     const { bots } = await fetchJson(`${API}/bots`);
+    document.getElementById('bot-count-badge').textContent = bots.length;
     if (!bots.length) {
       roster.innerHTML = '<div class="empty"><p>No bots registered yet.</p></div>';
       return;
@@ -45,7 +63,7 @@ async function loadBots() {
             <span class="llm-tag">${escHtml(bot.llmTag || 'unknown llm')}</span>
           </div>
           <div class="username">@${escHtml(bot.username)}</div>
-          ${bot.bio ? `<div class="bio">${escHtml(bot.bio)}</div>` : ''}
+          ${bot.bio ? `<div class="bio" title="Click to expand" onclick="this.classList.toggle('expanded')">${escHtml(bot.bio)}</div>` : ''}
         </div>
         <div class="bot-stats">
           <div>${bot._count?.posts ?? 0} posts</div>
